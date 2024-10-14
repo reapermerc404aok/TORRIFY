@@ -1,23 +1,25 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "torrify.h"
+#include "torrify_client.h"
 
-Req *request(struct sockaddr_in *sock2) {
+Req *request(const char *dstip, const int dstport) {
     Req *req;
 
     req = (Req *)malloc(reqsize);
 
     req->vn = 4;
     req->cd = 1;
-    req->dstport = sock2->sin_port;
-    req->dstip = sock2->sin_addr.s_addr;
+    req->dstport = htons(dstport);
+    req->dstip = inet_addr(dstip);
     strncpy(req->userid, USERNAME, 8);
 
     return req;
 }
 
-int connect(int s2, const struct sockaddr *sock2, socklen_t addrlen) {
+int main(int argc, char **argv) {
 
+    char *host;
+    int port;
     int s; // Socket file descriptor
     Req *req;
     Res *res;
@@ -25,11 +27,17 @@ int connect(int s2, const struct sockaddr *sock2, socklen_t addrlen) {
     int success;
     char tmp[512];
 
-    int (*connect_og)(int, const struct sockaddr *, socklen_t);
 
     struct sockaddr_in sock;
 
-    connect_og = dlsym(RTLD_NEXT, "connect");
+    if (argc < 3) {
+        fprintf(stderr, "Usage: %s <host> <port>\n", argv[0]);
+        return -1;
+    }
+
+    host = argv[1];
+    port = atoi(argv[2]);
+
 
     s = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -42,13 +50,13 @@ int connect(int s2, const struct sockaddr *sock2, socklen_t addrlen) {
     sock.sin_port = htons(PROXYPORT);
     sock.sin_addr.s_addr = inet_addr(PROXY);
 
-    if (connect_og(s, (struct sockaddr *)&sock, sizeof(sock)) != 0) {
+    if (connect(s, (struct sockaddr *)&sock, sizeof(sock)) != 0) {
         perror("connect");
         return -3;
     }
 
     printf("Connected to proxy server\n");
-    req = request((struct sockaddr_in*)sock2);
+    req = request(host, port);
 
     write(s, req, reqsize);
     memset(buf, 0, ressize);
@@ -72,9 +80,21 @@ int connect(int s2, const struct sockaddr *sock2, socklen_t addrlen) {
         return -5;
     }
 
-    printf("Successfully connected through the proxy");
+    printf("Successfully connected through the proxy through %s:%d\n",
+           host, port);
 
-    dup2(s, s2);
+    memset(tmp, 0, 512);
+    snprintf(tmp, 511,
+             "HEAD / HTTP/1.0\r\n"
+             "Host: thankyoudrbirch\r\n"
+             "\r\n");
+    write(s, tmp, strlen(tmp));
+    memset(tmp, 0, 512);
+    read(s, tmp, 511);
+    printf("'%s'\n", tmp);
+
+
+    close(s);
     free(req);
 
     return 0;
