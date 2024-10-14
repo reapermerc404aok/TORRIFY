@@ -29,7 +29,6 @@ int connect(int s2, const struct sockaddr *sock2, socklen_t addrlen) {
 
     struct sockaddr_in sock;
 
-    connect_og = dlsym(RTLD_NEXT, "connect");
 
     s = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -41,6 +40,8 @@ int connect(int s2, const struct sockaddr *sock2, socklen_t addrlen) {
     sock.sin_family = AF_INET;
     sock.sin_port = htons(PROXYPORT);
     sock.sin_addr.s_addr = inet_addr(PROXY);
+
+    connect_og = dlsym(RTLD_NEXT, "connect");
 
     if (connect_og(s, (struct sockaddr *)&sock, sizeof(sock)) != 0) {
         perror("connect");
