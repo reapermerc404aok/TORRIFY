@@ -12,7 +12,6 @@
 #define ressize     sizeof(struct proxy_response)
 //#define USERNAME    "http"
 #define USERNAME    "torrify"
-//#define USERNAME    "toraliz"
 
 typedef unsigned char int8;
 typedef unsigned short int int16;

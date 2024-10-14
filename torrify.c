@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
     Res *res;
     char buf[ressize];
     int success;
+    char tmp[512];
 
     struct sockaddr_in sock;
 
@@ -78,6 +79,17 @@ int main(int argc, char **argv) {
 
     printf("Successfully connected through the proxy through %s:%d\n",
            host, port);
+
+    memset(tmp, 0, 512);
+    snprintf(tmp, 511,
+             "HEAD / HTTP/1.0\r\n"
+             "Host: thankyoudrbirch\r\n"
+             "\r\n");
+    write(s, tmp, strlen(tmp));
+    memset(tmp, 0, 512);
+    read(s, tmp, 511);
+    printf("'%s'\n", tmp);
+
 
     close(s);
     free(req);
