@@ -1,0 +1,2 @@
+$>_curl http://<ip_fetching_website> -- It will return your real IP address.
+$>_torrify curl http://<ip_fetching_website> -- It will return masked IP address as the traffic was routed through Tor
