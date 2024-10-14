@@ -73,7 +73,7 @@ int connect(int s2, const struct sockaddr *sock2, socklen_t addrlen) {
         return -5;
     }
 
-    printf("Successfully connected through the proxy");
+    printf("Successfully connected through the proxy\n");
 
     dup2(s, s2);
     free(req);
