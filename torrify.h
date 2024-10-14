@@ -10,9 +10,9 @@
 #define PROXYPORT   9050
 #define reqsize     sizeof(struct proxy_request)
 #define ressize     sizeof(struct proxy_response)
-//#define USERNAME    "http\0\0\0"
-//#define USERNAME    "torrify"
-#define USERNAME    "toraliz"
+//#define USERNAME    "http"
+#define USERNAME    "torrify"
+//#define USERNAME    "toraliz"
 
 typedef unsigned char int8;
 typedef unsigned short int int16;

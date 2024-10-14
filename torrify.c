@@ -66,11 +66,7 @@ int main(int argc, char **argv) {
     res = (Res *)buf;
     success = (res->cd == 90);
 
-
-    printf("res->vn: %d\n", res->vn);
-    printf("res->cd: %d\n", res->cd);
-    printf("res->dstport: %d\n", res->_);
-    printf("res->dstip: %d\n", res->__);
+    printf("response code: %d\n", res->cd);
 
     if (!success) {
         fprintf(stderr, "Unable to traverse the proxy. Error code: %d\n",
